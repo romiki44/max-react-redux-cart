@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import Cart from './components/Cart/Cart';
 import Layout from './components/Layout/Layout';
 import Products from './components/Shop/Products';
-import { uiActions } from './store/ui-slice';
 import Notification from './components/UI/Notification.js';
-import { sendCartData } from './store/cart-slice';
+import { sendCartData, fetchCartData } from './store/cart-actions';
 
 let isInitial = true;
 
@@ -15,6 +14,10 @@ function App() {
   const cart = useSelector((state) => state.cart);
   const notification = useSelector((state) => state.ui.notification);
 
+  useEffect(() => {
+    dispatch(fetchCartData());
+  }, [dispatch]);
+
   //zmena...presunutie dispatch() ado action-creator...
   //inac moc tomu nerozumiem...prakticky vobec :(
   useEffect(() => {
@@ -23,7 +26,9 @@ function App() {
       return;
     }
 
-    dispatch(sendCartData(cart));
+    if (cart.changed) {
+      dispatch(sendCartData(cart));
+    }
   }, [cart, dispatch]);
 
   return (
